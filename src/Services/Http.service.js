@@ -9,16 +9,16 @@ class HttpService {
     axios.defaults.baseURL = this.getBaseUrlApi().dev;
     axios.interceptors.response.use(
       (resp) => {
-        let ghresp = resp.data;
+        let ghresp = resp.data || resp;
         ghresp.status = resp.status;
         return ghresp;
       },
       (err) => {
-        if( err.response.status === 401 ){
+        if( err.status === 401 ){
             this.removeToken();
             // go to login
         }
-        return Promise.reject(err.response);
+        return Promise.reject(err);
       }
     )
   }
@@ -85,7 +85,12 @@ class HttpService {
     this.setAuthHeaders(() => {
       axios.post( url, this.setParams(payload)).then(
         (resp) => { subject.next(resp); },
-        (err) => { console.log('PUT: ', err); }
+        (err) => {
+          console.log('POST ERROR');
+          let error = err.response.data;
+          error.status = err.response.status;
+          subject.error(error); 
+        }
       );
     }, noNeedToken);
     return subject;

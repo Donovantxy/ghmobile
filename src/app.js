@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import { Header } from './Components/Common/index';
 import { HttpService } from './Services/index';
+import LoginForm from './Components/LoginForm';
 
 class ghApp extends Component {
 
@@ -11,14 +12,14 @@ class ghApp extends Component {
     // .subscribe((resp) => {
     //   console.log(resp);
     // });
-    this.http.get('user/adult').subscribe((data) => { console.log(data); });
+    // this.http.get('user/adult').subscribe((data) => { console.log(data); });
   }
 
   render () {
     return (
       <View>
         <Header headerText="Login" />
-        <Text>An App!</Text>
+        <LoginForm />
       </View>
     )
   }

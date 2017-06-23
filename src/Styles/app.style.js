@@ -1,13 +1,11 @@
-const appStyles = {
+const jss = {
   inputText: {
     height: 25,
     flexGrow: 1,
-    // borderColor: '#c00',
-    // borderWidth: 1,
     borderRadius: 5,
   },
   inputError: {
-    backgroundColor: '#fee',
+    backgroundColor: '#f99',
     borderColor: '#faa'
   },
   inputSuccess: {
@@ -16,6 +14,14 @@ const appStyles = {
   },
   submitLogin: {
     fontSize: 18
+  },
+  button: {
+    borderWidth: 1,
+    backgroundColor: '#25b5b8',
+    borderColor: '#259598',
+    borderRadius: 3,
+    alignSelf: 'stretch',
+    padding: 6
   },
   errorField: (errMsg) => {
     return errMsg
@@ -29,4 +35,4 @@ const appStyles = {
   },
 }
 
-export default appStyles;
+export default jss;

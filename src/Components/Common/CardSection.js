@@ -13,7 +13,6 @@ const styles = {
   containerSection: {
     borderBottomWidth: 1,
     padding: 10,
-    //paddingBottom: 15,
     backgroundColor: '#fff',
     borderColor: '#ddd',
     position: 'relative'

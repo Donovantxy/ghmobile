@@ -4,13 +4,13 @@ import Rx from 'rxjs/Rx';
 
 class HttpService {
 
-  constructor() {
+  constructor(envStr) {
     this.__proto__.ghtnk = null;
-    axios.defaults.baseURL = this.getBaseUrlApi().dev;
+    axios.defaults.baseURL = this.getBaseUrlApi()[envStr];
     axios.interceptors.response.use(
       (resp) => {
         let ghresp = resp.data || resp;
-        ghresp.status = resp.status;
+        ghresp.status = resp.data ? resp.data.status : resp.status;
         return ghresp;
       },
       (err) => {
@@ -25,11 +25,15 @@ class HttpService {
 
   getBaseUrlApi = () => {
     return {
-      dev : 'https://dev-api.gohenry.co.uk/',
-      test: 'https://test-api.gohenry.co.uk/',
-      qa  : 'https://qa-api.gohenry.co.uk/',
-      live: 'https://api.gohenry.co.uk/',
+      DEV : 'https://dev-api.gohenry.co.uk/',
+      TEST: 'https://test-api.gohenry.co.uk/',
+      QA  : 'https://qa-api.gohenry.co.uk/',
+      LIVE: 'https://api.gohenry.co.uk/',
     };
+  }
+
+  switchBaseUrlApi(envStr) {
+    axios.defaults.baseURL = this.getBaseUrlApi()[envStr];
   }
 
   getToken = (callback) => {
@@ -50,8 +54,7 @@ class HttpService {
 
   setAuthHeaders = (callback, noNeedToken) => {
     if ( noNeedToken ) {
-      callback();
-      return;
+      callback(); return;
     }
     this.getToken(
       (token) => {
@@ -59,9 +62,7 @@ class HttpService {
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
           callback();
         }
-        else{
-          console.log('NO TOKEN PRESENT');
-        }
+        else{ console.log('NO TOKEN PRESENT'); }
       },
       (err) => { console.log('GET TOKEN: ', err); },
     );
@@ -89,7 +90,7 @@ class HttpService {
           console.log('POST ERROR');
           let error = err.response.data;
           error.status = err.response.status;
-          subject.error(error); 
+          subject.error(error);
         }
       );
     }, noNeedToken);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
+import jss from '../../Styles/app.style';
 
 const Button = (props) => {
   const { button, text } = styles;
@@ -18,11 +19,9 @@ const Button = (props) => {
 
 const styles = {
   button: {
-    // marginTop: 10,
-    // backgroundColor: 'linear-gradient(#25b5b8,#259598)',
     backgroundColor: '#25b5b8',
-    borderWidth: 1,
     borderColor: '#259598',
+    borderWidth: 1,
     borderRadius: 3,
     alignSelf: 'stretch',
     padding: 6

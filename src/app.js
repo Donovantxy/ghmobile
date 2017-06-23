@@ -5,16 +5,6 @@ import { HttpService } from './Services/index';
 import LoginForm from './Components/LoginForm';
 
 class ghApp extends Component {
-
-  componentWillMount() {
-    this.http = new HttpService();
-    // this.http.login('ciao21@ciao.com', 'ciaociA0')
-    // .subscribe((resp) => {
-    //   console.log(resp);
-    // });
-    // this.http.get('user/adult').subscribe((data) => { console.log(data); });
-  }
-
   render () {
     return (
       <View>
@@ -23,7 +13,6 @@ class ghApp extends Component {
       </View>
     )
   }
-
-}
+};
 
 export default ghApp;

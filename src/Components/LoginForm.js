@@ -2,20 +2,19 @@ import React, {Component} from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {Button, Card, CardSection, Input} from './Common';
 import { HttpService } from '../Services/index';
-import appStyles from '../Styles/app.styles';
+import jss from '../Styles/app.style';
 
 class LoginForm extends Component {
   state = {
-    username: '',
-    password: '',
+    username: 'ciao118@ciao.co',
+    password: 'ciaociA0',
     errorLogin: null,
     input: '',
     inputSuccess: null
   };
 
   componentWillMount() {
-    this.http = new HttpService();
-    this.errorMessage = '';
+    this.http = new HttpService('QA');
   }
 
   submit = () => {
@@ -40,14 +39,20 @@ class LoginForm extends Component {
     return (
         <Card>
           <Input
-              inputSuccess={this.state.inputSuccess}
+              ref='email'
+              validity={this.state.inputSuccess}
+              invalidStyle={jss.inputError}
               placeholder='uername or email address'
               keyboardType="email-address"
+              validateEmail
               onChangeText={username => this.setState({username})}
               value={this.state.username}
+              onBlur={(val)=>{console.log('VALUE INPUT: ', val);}}
           />
           <Input
-              inputSuccess={this.state.inputSuccess}
+              ref='password'
+              validStyle={{backgroundColor:'#9e9'}}
+              validity={this.state.inputSuccess}
               placeholder='password'
               secureTextEntry={true}
               onChangeText={password => this.setState({password})}
@@ -55,8 +60,8 @@ class LoginForm extends Component {
           />
 
           <CardSection>
-            <Button click={this.submit} textStyle={appStyles.submitLogin}>Log in</Button>
-            <Text style={appStyles.errorField(this.state.errorLogin)}>{this.state.errorLogin}</Text>
+            <Button click={this.submit} textStyle={jss.submitLogin}>Log in</Button>
+            <Text style={jss.errorField(this.state.errorLogin)}>{this.state.errorLogin}</Text>
           </CardSection>
         </Card>
     );

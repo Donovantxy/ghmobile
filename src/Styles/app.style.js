@@ -1,4 +1,7 @@
 const jss = {
+  mainContainer: {
+    padding: 10
+  },
   inputText: {
     height: 25,
     flexGrow: 1,

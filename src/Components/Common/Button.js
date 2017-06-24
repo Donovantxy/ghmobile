@@ -22,7 +22,8 @@ const styles = {
     backgroundColor: '#25b5b8',
     borderColor: '#259598',
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 4,
+    marginTop: 10,
     alignSelf: 'stretch',
     padding: 6
   },

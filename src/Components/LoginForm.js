@@ -19,8 +19,9 @@ class LoginForm extends Component {
 
   submit = () => {
     this.setState({errorLogin: null, inputSuccess: null});
-    if( this.state.username && this.state.password ){
-      this.http.login(this.state.username, this.state.password)
+    console.log('email', this.refs.email.checkValidity(), 'password', this.refs.password.checkValidity(), this.state.username , this.state.password);
+    if( this.refs.email.checkValidity() && this.refs.password.checkValidity() ){
+      this.http.login(this.refs.email.val(), this.refs.password.val())
       .subscribe(
         (resp) => {
           console.log(resp);
@@ -31,42 +32,49 @@ class LoginForm extends Component {
           if(err.status === 401){
             this.setState({errorLogin: err.message, inputSuccess: false});
           }
-        });
+        }
+      );
     }
   }
 
   render() {
     return (
-        <Card>
+        <View style={jss.mainContainer}>
           <Input
               ref='email'
               validity={this.state.inputSuccess}
-              invalidStyle={jss.inputError}
+              validStyle={$jss.validStyle}
               placeholder='uername or email address'
               keyboardType="email-address"
               validateEmail
-              onChangeText={username => this.setState({username})}
-              value={this.state.username}
               onBlur={(val)=>{console.log('VALUE INPUT: ', val);}}
           />
           <Input
               ref='password'
-              validStyle={{backgroundColor:'#9e9'}}
+              value={this.state.password}
               validity={this.state.inputSuccess}
+              validStyle={$jss.validStyle}
               placeholder='password'
               secureTextEntry={true}
-              onChangeText={password => this.setState({password})}
-              value={this.state.password}
+              maxLength={16}
+              minLength={8}
+              validator={(val) => { return /[A-Z]/.test(val) && /[\d]/.test(val); }}
           />
 
-          <CardSection>
+          <View>
             <Button click={this.submit} textStyle={jss.submitLogin}>Log in</Button>
             <Text style={jss.errorField(this.state.errorLogin)}>{this.state.errorLogin}</Text>
-          </CardSection>
-        </Card>
+          </View>
+        </View>
     );
   }
 }
 
+const $jss = {
+  validStyle: {
+    backgroundColor: '#EFE',
+    borderColor: '#6C6',
+  }
+}
 
 export default LoginForm;

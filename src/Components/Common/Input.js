@@ -2,47 +2,77 @@ import React, {Component} from 'react';
 import { View, TextInput,  } from 'react-native';
 import jss from '../../Styles/app.style';
 
+
+/* PROPS */
+/*
+  validStyle
+  invalidStyle
+  minLength
+*/
 class Input extends Component {
   state = {
-    validStatusStyle:null,
     touched:false,
-    valid:true
+    valid:true,
+    value:this.props.value,
   };
+
+  /** LIFE CYCLES **/
 
   componentWillMount() {
     console.log(this.props);
     this.setValidity(this.props.validity);
-    this.validator = this.props.validator || (() => {return true});
+    //$validator: fn()
+    this.$validator = this.props.validator && typeof this.props.validator === 'function'
+                      ? this.props.validator
+                      : (() => {return true});
   }
 
   componentWillReceiveProps(nextProps) {
     this.setValidity(nextProps.validity);
+    if(!nextProps.validity){ this.setState({touched:true}); }
   }
 
-  setValidity = (status) => {
-    let _successStatusStyle = status === null ? {} : styles[(status === true ? 'inputSuccess' : 'inputError')];
-    if(status != null){
-      if( this.props.validStyle ){
-        _successStatusStyle = status ? this.props.validStyle : _successStatusStyle;
-      } else if( this.props.invalidStyle ){
-        _successStatusStyle = !status ? this.props.invalidStyle : _successStatusStyle;
+  /** METHODS **/
+
+  checkValidity = () => {
+    //CUSTOM VALIDITY
+    let validity = this.$validator(this.state.value);
+    //EMAIL VALIDITY
+    validity = this.props.validateEmail
+               ? validity && this.isValidEmail()
+               : validity;
+    //MIN-LENGTH VALIDITY
+    validity = this.props.minLength
+              ? validity && this.state.value.length > 7
+              : validity;
+    return validity;
+  }
+
+  setValidity = (validity) => {
+    let _statusStyle = {};
+    if(validity != null){
+      _statusStyle = styles[(validity === true ? 'defaultStatusStyle' : 'invalidStatusStyle')];
+      if( this.props.validStyle && validity){
+        _statusStyle = this.props.validStyle;
+      } else if( this.props.invalidStyle && !validity){
+        _statusStyle = this.props.invalidStyle;
       }
     }
-    this.setState({validStatusStyle:_successStatusStyle});
+    this.setState({statusStyle: _statusStyle, valid: validity});
+  }
+
+  val = (value) => {
+    if(value !== undefined){
+      this.setState({value});
+      return value.trim();
+    }
+    return this.state.value;
   }
 
   onBlur = () => {
     this.setState({touched:true});
-    this.setState({
-      valid: (
-          this.validator(this.props.value) &&
-        ( this.props.validateEmail ? this.isValidEmail() : this.validator(this.props.value) )
-      )
-    });
-    // this.setState({valid:false});
-    console.log(this.state);
-    this.setValidity(this.state.valid);
-    if(this.props.onBlur) this.props.onBlur({state: this.state, value: this.props.value});
+    this.setValidity(this.checkValidity());
+    if(this.props.onBlur) this.props.onBlur({state: this.state, value: this.state.value});
   }
 
   onFocus = () => {
@@ -50,22 +80,32 @@ class Input extends Component {
   }
 
   isValidEmail = () => {
-    return /^([\w\-]{2,}\.?)+@([\w\-]{2,}\.?)+\.[a-z]{2,}$/.test(this.props.value.trim());
+    return /^([\w\-]{2,}\.?)+@([\w\-]{2,}\.?)+\.[a-z]{2,}$/.test(this.state.value);
+  }
+
+  onChange = (value) => {
+    this.setState({value}, () => {
+      console.log(this.state.touched);
+      if(this.state.touched) {
+        this.setValidity(this.checkValidity());
+      }
+    });
   }
 
   render() {
     return (
-      <View style={[styles.input, this.state.validStatusStyle]}>
+      <View style={[styles.inputContainer, this.state.statusStyle]}>
         <TextInput
           style={styles.textinput}
-          value = {this.props.value}
-          onChangeText = {this.props.onChangeText}
+          value = {this.state.value}
+          onChangeText={this.onChange}
           placeholder = {this.props.placeholder || ''}
           keyboardType = {this.props.keyboardType || 'default'}
           secureTextEntry = {this.props.secureTextEntry}
           autoCapitalize = {this.props.autoCapitalize ||'none'}
           onBlur = {this.onBlur}
           onFocus = {this.onFocus}
+          maxLength = {this.props.maxLength}
         />
       </View>
     );
@@ -74,11 +114,13 @@ class Input extends Component {
 };
 
 const styles = {
-  input: {
-    borderBottomWidth: 1,
+  inputContainer: {
+    borderWidth: 1,
     borderColor: '#ddd',
     padding: 0,
-    backgroundColor: '#fff',
+    borderRadius: 4,
+    marginTop: 15,
+    backgroundColor: '#FFF',
     position: 'relative',
   },
   textinput: {
@@ -86,14 +128,17 @@ const styles = {
     padding: 8,
     flexGrow: 1,
   },
-  inputError: {
-    backgroundColor: '#fee',
-    borderColor: '#faa'
+  defaultStatusStyle: {
+    backgroundColor: '#fff',
   },
-  inputSuccess: {
-    backgroundColor: '#efe',
-    borderColor: '#afa',
-  }
+  invalidStatusStyle: {
+    backgroundColor: '#fee',
+    borderColor: '#faa',
+    shadowColor: '#faa',
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {width: 0, height: 0}
+  },
 };
 
 export { Input };

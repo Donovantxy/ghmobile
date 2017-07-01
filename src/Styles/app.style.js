@@ -1,31 +1,50 @@
-const jss = {
+import { $colors, $vars } from './style.vars';
+
+const $jss = {
   mainContainer: {
-    padding: 10
+    padding: 10,
   },
+
   inputText: {
     height: 25,
     flexGrow: 1,
     borderRadius: 5,
   },
+
   inputError: {
-    backgroundColor: '#f99',
-    borderColor: '#faa'
+    backgroundColor: $colors.greenBackgroundNoValid,
+    borderColor: $colors.greenBorderNoValid,
+    shadowColor: $colors.greenBorderNoValid,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: $vars.shadowOpacity,
+    shadowRadius: $vars.shadowRadius,
   },
+
   inputSuccess: {
-    backgroundColor: '#efe',
-    borderColor: '#afa',
+    backgroundColor: $colors.greenBackgroundValid,
+    borderColor: $colors.greenBorderValid,
+    shadowColor: $colors.greenBorderValid,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: $vars.shadowOpacity,
+    shadowRadius: $vars.shadowRadius,
   },
+
   submitLogin: {
     fontSize: 18
   },
-  button: {
-    borderWidth: 1,
-    backgroundColor: '#25b5b8',
-    borderColor: '#259598',
-    borderRadius: 3,
-    alignSelf: 'stretch',
-    padding: 6
+
+  button: (backgroundColor, borderColor) => {
+    return {
+      borderWidth: 1,
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
+      borderRadius: 3,
+      alignSelf: 'stretch',
+      padding: 6,
+      marginTop: 15,
+    };
   },
+
   errorField: (errMsg) => {
     return errMsg
       ? {
@@ -36,6 +55,15 @@ const jss = {
         }
       : { display: 'none' }
   },
+
+  flexContainer: (direction, justifyContent) => {
+    return {
+      flex: 1,
+      flexDirection: direction || 'column',
+      justifyContent: justifyContent || 'center',
+    };
+  },
+
 }
 
-export default jss;
+export { $jss };

@@ -6,7 +6,7 @@ class HttpService {
 
   constructor(envStr) {
     this.__proto__.ghtnk = null;
-    axios.defaults.baseURL = this.getBaseUrlApi()[envStr];
+    axios.defaults.baseURL = this.getBaseUrlApi()[envStr || 'DEV'];
     axios.interceptors.response.use(
       (resp) => {
         let ghresp = resp.data || resp;

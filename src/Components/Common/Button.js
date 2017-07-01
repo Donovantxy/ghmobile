@@ -1,13 +1,13 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import jss from '../../Styles/app.style';
+import { $jss } from '../../Styles/index';
 
 const Button = (props) => {
   const { button, text } = styles;
   const textStyle = props.textStyle ? props.textStyle : {};
   return (
       <TouchableOpacity
-          style={button}
+          style={props.style}
           onPress={props.click}
           delayLongPress={800}
           onLongPress={props.longClick}
@@ -18,19 +18,10 @@ const Button = (props) => {
 };
 
 const styles = {
-  button: {
-    backgroundColor: '#25b5b8',
-    borderColor: '#259598',
-    borderWidth: 1,
-    borderRadius: 4,
-    marginTop: 10,
-    alignSelf: 'stretch',
-    padding: 6
-  },
   text: {
     textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#fff'
   }
 };

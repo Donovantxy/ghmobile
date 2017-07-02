@@ -1,5 +1,7 @@
 import {Component} from 'react';
 import { HttpService } from '../../Services/index';
+import ServiceTest from '../../Services/ServiceTest';
+
 
 class LoginFormController extends Component{
   state = {
@@ -11,6 +13,8 @@ class LoginFormController extends Component{
   };
 
   componentWillMount = () => {
+    this.http2 = new HttpService('TEST');
+    this.st = new ServiceTest();
     this.http = new HttpService('TEST');
   };
 

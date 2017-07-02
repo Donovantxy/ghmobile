@@ -1,10 +1,12 @@
+import Singleton from './Singleton';
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 import Rx from 'rxjs/Rx';
 
-class HttpService {
+class HttpService extends Singleton{
 
   constructor(envStr) {
+    super();
     this.__proto__.ghtnk = null;
     axios.defaults.baseURL = this.getBaseUrlApi()[envStr || 'DEV'];
     axios.interceptors.response.use(

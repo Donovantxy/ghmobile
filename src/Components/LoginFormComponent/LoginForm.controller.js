@@ -25,10 +25,11 @@ class LoginFormController extends Component{
   };
 
   passwordValidator = (val) => {
-    return /[A-Z]/.test(val) && /[\d]/.test(val) ? null : {error: 'Invalid password format'};
+    return (/[A-Z]/.test(val) && /[\d]/.test(val)) || 'Invalid password format';
   }
 
   submit = () => {
+    this.getFormValidity();
     return;
     if( this.getFormValidity() ){
       this.setState({errorLogin: null, inputSuccess: null});

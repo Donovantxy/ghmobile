@@ -5,11 +5,12 @@ const $colors = {
   redBorderNoValid: '#FAA',
   lightGrey: '#DDD',
   gohenryGreen: '#22B6B7',
+  gohenryGreenLighter: '#eaffff',
   gohenryGreenDarker: '#259598',
 };
 
 const $vars = {
-  shadowOpacity: 0.3,
+  shadowOpacity: 0.2,
   shadowRadius: 3,
 }
 

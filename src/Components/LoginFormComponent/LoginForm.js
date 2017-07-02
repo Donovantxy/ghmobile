@@ -26,7 +26,7 @@ class LoginForm extends LoginFormController {
               placeholder='uername or email address'
               keyboardType='email-address'
               validateEmail
-              flashingValid = {2000}
+              flashingValid = {1500}
               value={this.state.username}
               autoCorrect={true}
               style={{marginTop:0}}
@@ -35,7 +35,7 @@ class LoginForm extends LoginFormController {
               ref='password'
               validity={this.state.inputSuccess}
               validStyle={$jss.inputSuccess}
-              flashingValid = {2000}
+              flashingValid = {1500}
               placeholder='password'
               secureTextEntry={true}
               maxLength={16}

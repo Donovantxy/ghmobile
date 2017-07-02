@@ -21,9 +21,9 @@ const $jss = {
   },
 
   inputSuccess: {
-    backgroundColor: $colors.greenBackgroundValid,
-    borderColor: $colors.greenBorderValid,
-    shadowColor: $colors.greenBorderValid,
+    backgroundColor: $colors.gohenryGreenLighter,
+    borderColor: $colors.gohenryGreenDarker,
+    shadowColor: $colors.gohenryGreenDarker,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: $vars.shadowOpacity,
     shadowRadius: $vars.shadowRadius,

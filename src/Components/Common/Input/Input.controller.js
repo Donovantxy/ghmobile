@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import { Animated } from 'react-native';
 import {jss} from './Input.style';
+import Validator from './Validator';
 
 /* PROPS
   validStyle: jss
@@ -18,6 +19,7 @@ class InputController extends Component{
 
   /** LIFE CYCLES **/
   componentWillMount() {
+    this.validator = new Validator(this);
     this.$validator = this.props.validator && typeof this.props.validator === 'function'
                       ? this.props.validator
                       : (() => {return null});
@@ -32,14 +34,10 @@ class InputController extends Component{
   checkValidity = (applySetValidity) => {
     let validity = null;
     var validators = {
-      custom    : this.$validator(this.state.value),
-      email     : this.props.validateEmail ? this.isValidEmail() : null,
-      minLength : this.props.minLength
-                  ? ( this.state.value.length >= this.props.minLength
-                      ? null
-                      : { error: `You have to digit a minimun of ${this.props.minLength} characters` }
-                    )
-                  : null,
+      custom    : this.props.validator && typeof this.props.validator === 'function'
+                  ? Validator.custom(this.props.validator, this.state.value) : null,
+      email     : this.props.validateEmail ? Validator.email(this.state.value) : null,
+      minLength : this.props.minLength ? Validator.minLength(this.state.value, 8) : null,
     }
     for(let iv in validators){
       if(validators[iv]){
@@ -70,7 +68,6 @@ class InputController extends Component{
     }
     this.setState({statusStyle: _statusStyle});
     this.setValidity(validityResult);
-
     if( this.props.flashingValid && !validityResult){
       this.runFlashValidation(_statusStyle);
     }
@@ -86,7 +83,7 @@ class InputController extends Component{
       }
       let animValue = new Animated.Value(0);
       let interpolation = animValue.interpolate({
-        inputRange: [0, 70, 100],
+        inputRange: [0, 80, 100],
         outputRange: [
           statusStyle[ii],
           statusStyle[ii],
@@ -94,10 +91,11 @@ class InputController extends Component{
         ]
       });
       newInterpolationStatusStyle[ii] = interpolation;
-
       let animation = Animated.timing(animValue, {
         toValue: 100,
-        duration: this.props.flashingValid,
+        duration: this.props.flashingValid && this.props.flashingValid > 1
+                  ? this.props.flashingValid
+                  : 500,
       });
       animations.push(animation);
     }
@@ -108,7 +106,7 @@ class InputController extends Component{
   val = (value) => {
     if(value !== undefined){
       this.setState({value});
-      return value.trim();
+      return value;
     }
     return this.state.value;
   }
@@ -121,11 +119,6 @@ class InputController extends Component{
 
   onFocus = () => {
     if(!!this.props.onFocus) this.props.onFocus(this.props.value);
-  }
-
-  isValidEmail = () => {
-    return /^([\w\-]{2,}\.?)+@([\w\-]{2,}\.?)+\.[a-z]{2,}$/.test(this.state.value)
-           ? null : { error: 'Wrong email format' };
   }
 
   onChange = (value) => {

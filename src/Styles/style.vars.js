@@ -7,6 +7,7 @@ const $colors = {
   gohenryGreen: '#22B6B7',
   gohenryGreenLighter: '#eaffff',
   gohenryGreenDarker: '#259598',
+  redError: '#f33',
 };
 
 const $vars = {

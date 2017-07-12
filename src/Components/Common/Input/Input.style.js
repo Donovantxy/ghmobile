@@ -1,10 +1,12 @@
+import { $colors } from '../../../Styles/index';
+
 const jss = {
   defaultStatusStyle: {
     borderWidth: 1,
     borderColor: '#ddd',
     padding: 0,
     borderRadius: 4,
-    marginTop: 15,
+    marginTop: 5,
     backgroundColor: '#FFF',
     position: 'relative',
     shadowColor: 'transparent',
@@ -24,7 +26,7 @@ const jss = {
     shadowOpacity: 0.8,
     shadowRadius: 2,
     shadowOffset: {width: 0, height: 0}
-  },
+  }
 };
 
 export {jss};

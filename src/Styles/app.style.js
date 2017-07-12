@@ -11,6 +11,10 @@ const $jss = {
     borderRadius: 5,
   },
 
+  hidden: {
+    display: 'none',
+  },
+
   inputError: {
     backgroundColor: $colors.greenBackgroundNoValid,
     borderColor: $colors.greenBorderNoValid,
@@ -31,6 +35,13 @@ const $jss = {
 
   submitLogin: {
     fontSize: 18
+  },
+
+  errorMessage: {
+    fontSize: 11,
+    color: $colors.redError,
+    marginLeft:1,
+    marginTop: 2
   },
 
   button: (backgroundColor, borderColor) => {

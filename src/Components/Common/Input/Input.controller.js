@@ -8,6 +8,7 @@ import Validator from './Validator';
   flashingValid: time (ms)
   invalidStyle: jss
   minLength: number
+  errorMessage: string
 */
 class InputController extends Component{
   state = {
@@ -26,23 +27,34 @@ class InputController extends Component{
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setValidityStyle(nextProps.validity);
-    if(!nextProps.validity){ $.setState({touched:true}); }
+    this.setValidityStyle(nextProps.validity === true ? null : nextProps.validity);
+    if(!nextProps.validity){ this.setState({touched:true}); }
   }
 
   /** METHODS **/
   checkValidity = (applySetValidity) => {
     let validity = null;
+    this.setState({
+      touched: true,
+      valid: false,
+      errorMessage: ''
+    });
     var validators = {
       custom    : this.props.validator && typeof this.props.validator === 'function'
                   ? Validator.custom(this.props.validator, this.state.value) : null,
       email     : this.props.validateEmail ? Validator.email(this.state.value) : null,
       minLength : this.props.minLength ? Validator.minLength(this.state.value, 8) : null,
+      required  : this.props.required
+                  ? (!!this.state.value ? null : { error : this.props.required || 'This field is required' })
+                  : null
     }
     for(let iv in validators){
-      if(validators[iv]){
-        validity = validators[iv];
-        this.setValidity(validity === null);
+      validity = validators[iv];
+      if(validity){
+        this.setState({
+          valid: false,
+          errorMessage: this.props.errorMessage || validity.error,
+        });
         break;
       }
     }
@@ -53,22 +65,16 @@ class InputController extends Component{
     return validity;
   }
 
-  setValidity(validity){
-    this.setState({valid: validity, touched: true});
-  }
-
   setValidityStyle = (validityResult) => {
     let _statusStyle = {};
-    let _validity = validityResult === null;
-    _statusStyle = jss[(_validity ? 'defaultStatusStyle' : 'invalidStatusStyle')];
-    if( this.props.validStyle && _validity){
+    _statusStyle = jss[(validityResult === null ? 'defaultStatusStyle' : 'invalidStatusStyle')];
+    if( this.props.validStyle && validityResult === null){
       _statusStyle = this.props.validStyle;
-    } else if( this.props.invalidStyle && !_validity){
+    } else if( this.props.invalidStyle && validityResult !== null){
       _statusStyle = this.props.invalidStyle;
     }
     this.setState({statusStyle: _statusStyle});
-    this.setValidity(validityResult);
-    if( this.props.flashingValid && !validityResult){
+    if( this.props.validStyle && this.props.flashingValid && validityResult === null){
       this.runFlashValidation(_statusStyle);
     }
   }
@@ -114,11 +120,11 @@ class InputController extends Component{
   onBlur = () => {
     this.setState({touched:true});
     this.setValidityStyle(this.checkValidity());
-    if(this.props.onBlur) this.props.onBlur({state: this.state, value: this.state.value});
+    if(this.props.onBlur) this.props.onBlur(this.state.value, this);
   }
 
   onFocus = () => {
-    if(!!this.props.onFocus) this.props.onFocus(this.props.value);
+    if(this.props.onFocus) this.props.onFocus(this.props.value, this);
   }
 
   onChange = (value) => {

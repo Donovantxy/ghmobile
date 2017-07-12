@@ -9,7 +9,7 @@ class Validator {
   }
 
   static minLength(value, min, msg) {
-    let _msg = msg || `You have to digit a minimun of ${min} characters`;
+    let _msg = msg || `Digit a minimun of ${min} characters`;
     if(value){
       return value.length >= min
       ? null

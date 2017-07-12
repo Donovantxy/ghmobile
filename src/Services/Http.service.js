@@ -7,8 +7,7 @@ class HttpService extends Singleton{
 
   constructor(envStr) {
     super();
-    this.__proto__.ghtnk = null;
-    axios.defaults.baseURL = this.getBaseUrlApi()[envStr || 'DEV'];
+    axios.defaults.baseURL = this.getBaseUrlApi(envStr);
     axios.interceptors.response.use(
       (resp) => {
         let ghresp = resp.data || resp;
@@ -25,13 +24,14 @@ class HttpService extends Singleton{
     )
   }
 
-  getBaseUrlApi = () => {
-    return {
+  getBaseUrlApi = (env) => {
+    let envObj = {
       DEV : 'https://dev-api.gohenry.co.uk/',
       TEST: 'https://test-api.gohenry.co.uk/',
       QA  : 'https://qa-api.gohenry.co.uk/',
       LIVE: 'https://api.gohenry.co.uk/',
     };
+    return envObj[env] || envObj['DEV'];
   }
 
   switchBaseUrlApi(envStr) {
@@ -40,7 +40,7 @@ class HttpService extends Singleton{
 
   getToken = (callback) => {
       let promise = AsyncStorage.getItem('ghtkn');
-      if( callback ){
+      if( callback && typeof callback === 'function' ){
         promise.then(callback, () => { console.log('getToken: ', err) });
       }
       else return promise;
@@ -89,7 +89,7 @@ class HttpService extends Singleton{
       axios.post( url, this.setParams(payload)).then(
         (resp) => { subject.next(resp); },
         (err) => {
-          console.log('POST ERROR');
+          console.log('POST ERROR: ', err);
           let error = err.response.data;
           error.status = err.response.status;
           subject.error(error);

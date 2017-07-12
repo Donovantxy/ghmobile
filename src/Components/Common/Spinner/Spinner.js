@@ -72,6 +72,7 @@ class Spinner extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps.showSpinner);
     this.setState({showSpinner:nextProps.showSpinner});
     if( nextProps.showSpinner ){
       this.groupAnimation();

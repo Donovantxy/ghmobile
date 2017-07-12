@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, Image} from 'react-native';
+import {View, Text, TextInput, Image, ActivityIndicator} from 'react-native';
 
 import { $colors, $jss } from '../../Styles/index';
 import {Button, Spinner} from '../Common/index';
@@ -18,6 +18,7 @@ class LoginForm extends LoginFormController {
             source={imgs.logo}
             resizeMode="contain"
           />
+
           <Input
               ref='email'
               keyboardType='email-address'
@@ -55,7 +56,6 @@ class LoginForm extends LoginFormController {
     );
   }
 }
-// <Spinner />
-
+// <Spinner showSpinner={this.state.showSpinner}/>
 
 export default LoginForm;

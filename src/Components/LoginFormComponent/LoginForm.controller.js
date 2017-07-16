@@ -1,5 +1,6 @@
 import {Component} from 'react';
-import { HttpService } from '../../Services/index';
+import {AsyncStorage} from 'react-native';
+import { HttpService, LoaderService } from '../../Services/';
 
 class LoginFormController extends Component{
   state = {
@@ -13,7 +14,15 @@ class LoginFormController extends Component{
 
   componentWillMount = () => {
     this.http = new HttpService('TEST');
+    this.loaderService = new LoaderService();
   };
+
+  doSomething(event) {
+    this.http
+      .getAuthentication()
+      .subscribe((auth) => { console.log(auth); });
+    this.loaderService.emitShowLoader(true);
+  }
 
   getFormValidity =  () => {
     let isValid = true;
@@ -31,19 +40,24 @@ class LoginFormController extends Component{
 
   submit = () => {
     if( this.getFormValidity() ){
-      this.setState({showSpinner: true});
+      this.loaderService.emitShowLoader(true);
       this.setState({errorLogin: null, formSuccess: null});
       this.http.login(this.refs.email.val(), this.refs.password.val())
       .subscribe(
         (resp) => {
-          this.setState({showSpinner: false});
+          this.loaderService.emitShowLoader(false);
           this.setState({formSuccess: true});
         },
         (err) => {
+          console.log(err);
           if(err.status === 401){
-            this.setState({showSpinner: false});
+            this.loaderService.emitShowLoader(false);
             this.setState({errorLogin: err.message, formSuccess: err.message});
+          } else if( /aborted/i.test(err) ){
+            this.setState({errorLogin: 'Connection Aborted'});
+            this.loaderService.emitShowLoader(false);
           }
+
         }
       );
     } //IF

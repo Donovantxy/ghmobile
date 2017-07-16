@@ -1,5 +1,8 @@
 import React from 'react';
-import {View, Text, TextInput, Image, ActivityIndicator} from 'react-native';
+import {
+  View, Text, TextInput, Image,
+  ActivityIndicator, TouchableWithoutFeedback
+} from 'react-native';
 
 import { $colors, $jss } from '../../Styles/index';
 import {Button, Spinner} from '../Common/index';
@@ -13,11 +16,13 @@ class LoginForm extends LoginFormController {
   render() {
     return (
         <View style={[$jss.mainContainer, $jss.flexContainer()]}>
-          <Image
-            style={jss.logo}
-            source={imgs.logo}
-            resizeMode="contain"
-          />
+          <TouchableWithoutFeedback onPress={this.doSomething.bind(this)} >
+            <Image
+              style={jss.logo}
+              source={imgs.logo}
+              resizeMode="contain"
+              />
+          </TouchableWithoutFeedback>
 
           <Input
               ref='email'
@@ -51,11 +56,9 @@ class LoginForm extends LoginFormController {
             </Button>
             <Text style={$jss.errorField(this.state.errorLogin)}>{this.state.errorLogin}</Text>
           </View>
-          <Spinner showSpinner={this.state.showSpinner}/>
         </View>
     );
   }
 }
-// <Spinner showSpinner={this.state.showSpinner}/>
 
 export default LoginForm;

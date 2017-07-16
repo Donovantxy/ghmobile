@@ -8,6 +8,7 @@ class HttpService extends Singleton{
   constructor(envStr) {
     super();
     axios.defaults.baseURL = this.getBaseUrlApi(envStr);
+    axios.defaults.timeout = 15000;
     axios.interceptors.response.use(
       (resp) => {
         let ghresp = resp.data || resp;
@@ -38,20 +39,31 @@ class HttpService extends Singleton{
     axios.defaults.baseURL = this.getBaseUrlApi()[envStr];
   }
 
+  getAuthentication() {
+    return Rx.Observable
+      .fromPromise(AsyncStorage.getItem('authentication'))
+      .map(authStr => JSON.parse(authStr) )
+  }
+
+  //@private
   getToken = (callback) => {
-      let promise = AsyncStorage.getItem('ghtkn');
+      let promise = AsyncStorage.getItem('authentication');
       if( callback && typeof callback === 'function' ){
         promise.then(callback, () => { console.log('getToken: ', err) });
       }
       else return promise;
   };
 
+  //@private
   setToken = (token) => {
-    return AsyncStorage.setItem('ghtkn', token);
+    var authObj = JSON.parse(atob(token.split('.')[1]));
+    authObj.token = token;
+    console.log(token, authObj, authObj.token);
+    return AsyncStorage.setItem('authentication', JSON.stringify(authObj));
   };
 
   removeToken = () => {
-    AsyncStorage.removeItem('ghtkn');
+    AsyncStorage.removeItem('authentication');
   };
 
   setAuthHeaders = (callback, noNeedToken) => {
@@ -59,9 +71,9 @@ class HttpService extends Singleton{
       callback(); return;
     }
     this.getToken(
-      (token) => {
-        if (token) {
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+      (authentication) => {
+        if (authentication) {
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + JSON.parse(authentication).token;
           callback();
         }
         else{ console.log('NO TOKEN PRESENT'); }
@@ -73,7 +85,7 @@ class HttpService extends Singleton{
   // GET
   get = (url) => {
     let subject = new Rx.Subject();
-    this.setAuthHeaders((token) => {
+    this.setAuthHeaders(() => {
       axios.get(url).then(
         (data) => { subject.next(data); },
         (err) => { console.log('GET: ', err); }
@@ -89,9 +101,15 @@ class HttpService extends Singleton{
       axios.post( url, this.setParams(payload)).then(
         (resp) => { subject.next(resp); },
         (err) => {
-          console.log('POST ERROR: ', err);
-          let error = err.response.data;
-          error.status = err.response.status;
+          console.log('POST ERROR: ', Object.keys(err), err.code);
+          let error;
+          if( err.response ){
+            error = err.response.data;
+            error.status = err.response.status;
+            subject.error(error);
+          } else {
+            error = err.code;
+          }
           subject.error(error);
         }
       );
@@ -102,7 +120,7 @@ class HttpService extends Singleton{
   // PUT
   put = (url, payload) => {
     let subject = new Rx.Subject();
-    this.setAuthHeaders((token) => {
+    this.setAuthHeaders(() => {
       axios.put( url, this.setParams(payload)).then(
         (resp) => { subject.next(resp); },
         (err) => { console.log('PUT: ', err); }

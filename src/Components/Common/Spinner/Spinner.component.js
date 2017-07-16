@@ -1,16 +1,29 @@
 import React, {Component} from 'react';
 import {View, ActivityIndicator} from 'react-native';
+import {LoaderService} from '../../../Services/';
 import {$colors} from '../../../Styles/index';
 
-const Spinner = ({size, showSpinner}) => {
-  console.log(showSpinner);
-  if(showSpinner){
-    return (
-        <View style={overlay}>
-          <ActivityIndicator style={spinner} size={size || 'large'} color={$colors.gohenryGreen} />
-        </View>
-    );
-  } else { return (<View />); }
+class Spinner extends Component {
+
+  state = {showSpinner: false};
+
+  componentWillMount = () => {
+    let loaderService = new LoaderService();
+    loaderService.loaderListener()
+    .subscribe(showStatus => {
+      this.setState({showSpinner: showStatus});
+    });
+  }
+
+  render(){
+    if(this.state.showSpinner){
+      return (
+          <View style={overlay}>
+            <ActivityIndicator style={spinner} size={this.props.size || 'large'} color={$colors.gohenryGreen} />
+          </View>
+      );
+    } else { return (<View/>); }
+  }
 }
 
 const overlay = {
